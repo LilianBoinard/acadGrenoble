@@ -1,6 +1,5 @@
 import requests
 import urllib.parse
-import sys
 from termcolor import colored, cprint
 
 def process():
