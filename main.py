@@ -49,6 +49,7 @@ def automatic():
     while daten3 < 2000:
         process()
         daten3 += 1
+
 def getID():
     choice = input("Mode pilote automatique ? (y/n)\n")
     if choice == "y":
@@ -60,4 +61,6 @@ def getID():
         print('Vous devez entrer "y" (oui) ou "n" (non)')
         getID()
     
-getID()
+
+if __name__ == '__main__':
+    getID()
