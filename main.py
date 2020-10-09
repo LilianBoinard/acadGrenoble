@@ -1,6 +1,9 @@
 import requests
 import urllib.parse
 from termcolor import colored, cprint
+from bs4 import BeautifulSoup as bs
+import sys
+
 
 def process():
     params = {'daten1': daten1, 'daten2': daten2, 'daten3': daten3}
@@ -8,10 +11,17 @@ def process():
     r = requests.post('https://bv.ac-grenoble.fr/searchannu/src/infos_perso/etape2.php?login=%20')
     r = requests.get('https://bv.ac-grenoble.fr/searchannu/src/infos_perso/infos_perso.php?', params)
     txt = r.text
+    soup = bs(txt, 'html.parser')
+    fish = {
+        'name': soup.findAll('td')[1].get_text(),
+        'mail': soup.findAll('a')[0].get_text(),
+    }
+    print(fish)
+
     a = "Informations" in txt
     if a:
         file = open("links.txt", "a")
-        file.write(params)
+        file.write(fish['name'] + " : " + fish['mail'])
         file.write('\n')
         file.close()
         resultText = daten1,daten2,daten3,': Utilisateur trouvé.'
@@ -19,6 +29,7 @@ def process():
     else:
         resultText = daten1,daten2,daten3,': Aucun utilisateur avec cette date.'
         cprint(resultText, 'red', 'on_grey')
+    sys.exit()
 
 def withInput():
     global daten1
