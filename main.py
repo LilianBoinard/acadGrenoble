@@ -2,7 +2,6 @@ import requests
 import urllib.parse
 from termcolor import cprint
 from bs4 import BeautifulSoup as bs
-import sys
 
 def _input(userMessage = "") -> bool:
     """
@@ -43,49 +42,43 @@ def _input(userMessage = "") -> bool:
             break
 
 
-def process():
-    params = {'daten1': daten1, 'daten2': daten2, 'daten3': daten3}
+def process(**kwargs):
+    dateTuple = (kwargs['d'], kwargs['m'], kwargs['y'])
+    params = {'daten1': kwargs['d'], 'daten2': kwargs['m'], 'daten3': kwargs['y']}
     params = urllib.parse.urlencode(params)
-    r = requests.post('https://bv.ac-grenoble.fr/searchannu/src/infos_perso/etape2.php?login=%20')
+    requests.post('https://bv.ac-grenoble.fr/searchannu/src/infos_perso/etape2.php?login=%20')
     r = requests.get('https://bv.ac-grenoble.fr/searchannu/src/infos_perso/infos_perso.php?', params)
-    txt = r.text
-    soup = bs(txt, 'html.parser')
-    fish = {
-        'name': soup.findAll('td')[1].get_text(),
-        'mail': soup.findAll('a')[0].get_text(),
-    }
-    print(fish)
+    soup = bs(r.text, 'html.parser')
 
-    a = "Informations" in txt
-    if a:
+    if len(soup.findAll('td')) * soup.findAll('a'):
+        fish = {
+            'name': soup.findAll('td')[1].get_text(),
+            'mail': soup.findAll('a')[0].get_text(),
+        }
         file = open("links.txt", "a")
-        file.write(fish['name'] + " : " + fish['mail'])
-        file.write('\n')
+        file.write(fish['name'] + " : " + fish['mail'] + '\n')
         file.close()
-        resultText = daten1,daten2,daten3,': Utilisateur trouvé.'
-        cprint(resultText, 'green', 'on_grey')
+        resultText = '{} {} {} : Utilisateur trouvé.'.format(*dateTuple)
+        outputColor = 'green'
     else:
-        resultText = daten1,daten2,daten3,': Aucun utilisateur avec cette date.'
-        cprint(resultText, 'red', 'on_grey')
-    sys.exit()
+        resultText = '{} {} {} : Aucun utilisateur avec cette date.'.format(*dateTuple)
+        outputColor = 'red'
+    cprint(resultText, outputColor, 'on_grey')
 
-def withInput():
-    global daten1
-    global daten2
-    global daten3
-    daten1 = int(input("Day: "))
-    daten2 = int(input("Month: "))
-    daten3 = int(input("Year: "))
-    
+
+withInput = lambda : {'d': int(input("Day: ")), 'm': int(input("Month: ")), 'y': int(input("Year: "))}
+
+
 def automatic():
-    global daten1
-    global daten2
-    global daten3
-    daten1 = 1
-    daten2 = 1
+    #todo : Créer un algo pour que le nombre de jour dans un mois sois cohérent ( 29, 30 ou 31 jour ;) )
+    daten1 = daten2 = 1
     daten3 = 1900
     while daten3 < 2000:
-        process()
+        while daten2 < 12:
+            while daten1 < 31:
+                process(**{'d': daten1, 'm': daten2, 'y': daten3})
+                daten1 += 1
+            daten2 += 1
         daten3 += 1
 
 def getID():
@@ -94,8 +87,7 @@ def getID():
     if choice:
         automatic()
     else:
-        withInput()
-        process()
+        process(**withInput())
     
 
 if __name__ == '__main__':
