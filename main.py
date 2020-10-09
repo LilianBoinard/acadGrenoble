@@ -1,8 +1,46 @@
 import requests
 import urllib.parse
-from termcolor import colored, cprint
+from termcolor import cprint
 from bs4 import BeautifulSoup as bs
 import sys
+
+def _input(userMessage = "") -> bool:
+    """
+    Fonction qui récupère le choix d'un utilisateur sans la touche 'Entrée'
+    Tant que le choix n'est pas conforme le process continue
+    :type userMessage: str
+    :param userMessage: (Optionel) Afficher un message avant la saisie utilisateur
+    :rtype: bool
+    :return Vrais si 'y' ou 'Y' et Faux si 'n' ou 'N'
+    """
+
+    # Si message à afficher, on affiche le message
+    if len(userMessage):
+        print(userMessage)
+
+    # Si msvcrt est indisponible on redéfinnit la méthode getch
+    try:
+        from msvcrt import getch
+    except ImportError:
+        def getch():
+            import sys, tty, termios
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(sys.stdin.fileno())
+                ch = sys.stdin.read(1)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            return ch
+
+    print("Press Y or N to continue")
+
+    # Dés que la touche saisie est conforme, on retourne la valeur bool du choix (yes = true, no = false)
+    while True:
+        char = getch()
+        if char.lower() in ("y", "n"):
+            return {"y": True, "n": False}[char.lower()]
+            break
 
 
 def process():
@@ -51,15 +89,13 @@ def automatic():
         daten3 += 1
 
 def getID():
-    choice = input("Mode pilote automatique ? (y/n)\n")
-    if choice == "y":
+
+    choice = _input("Mode pilote automatique ?")
+    if choice:
         automatic()
-    elif choice == "n":
+    else:
         withInput()
         process()
-    else:
-        print('Vous devez entrer "y" (oui) ou "n" (non)')
-        getID()
     
 
 if __name__ == '__main__':
