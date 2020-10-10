@@ -82,11 +82,12 @@ withInput = lambda : {'d': int(input("Day: ")), 'm': int(input("Month: ")), 'y':
 
 def automatic():
     #todo : Créer un algo pour que le nombre de jour dans un mois sois cohérent ( 29, 30 ou 31 jour ;) )
-    daten1 = daten2 = 1
-    daten3 = 1900
-    while daten3 < 2000:
+    daten3 = 1955
+    while daten3 < 2001:
+        daten2 = 1
         while daten2 < 12:
-            while daten1 < 31:
+            daten1 = 1
+            while daten1 < 32:
                 process(**{'d': daten1, 'm': daten2, 'y': daten3})
                 daten1 += 1
             daten2 += 1
