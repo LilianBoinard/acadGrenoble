@@ -2,8 +2,10 @@ import requests
 import urllib.parse
 from termcolor import cprint
 from bs4 import BeautifulSoup as bs
+# donner un allias à un module importer pour simplifier l'écriture et la lecture du code (import foo as bar)
 
 def _input(userMessage = "") -> bool:
+    # l'annotation '-> type' permet de typer le retour d'un fonction (commme en C quand tu fais 'type maFonction(){}' )
     """
     Fonction qui récupère le choix d'un utilisateur sans la touche 'Entrée'
     Tant que le choix n'est pas conforme le process continue
@@ -12,6 +14,14 @@ def _input(userMessage = "") -> bool:
     :rtype: bool
     :return Vrais si 'y' ou 'Y' et Faux si 'n' ou 'N'
     """
+
+    # les commentaire avec trois double cote permette de faire des documentations reconnues par les IDE ,
+    #   :type nomArgument: Type             permet de documenter le type l'argument
+    #   :param nomArgument: Description     permet de commenter la nature de l'argument
+    #   :rtype: Type                        permet de documenter le type de retour de la fonction
+    #   :return Description                 permet de commenter la nature de la fonction
+    #   Grace à ces annotaion, dans un IDE quand tu survole ou tape le nom d'une fonction
+    #       une boite de dialogue apparait et restitue ces information
 
     # Si message à afficher, on affiche le message
     if len(userMessage):
@@ -66,6 +76,7 @@ def process(**kwargs):
     cprint(resultText, outputColor, 'on_grey')
 
 
+# Ceci est une fonction Lambda, on les utilise lorsque une fonction fait une seule action
 withInput = lambda : {'d': int(input("Day: ")), 'm': int(input("Month: ")), 'y': int(input("Year: "))}
 
 
@@ -81,6 +92,7 @@ def automatic():
             daten2 += 1
         daten3 += 1
 
+
 def getID():
 
     choice = _input("Mode pilote automatique ?")
@@ -90,5 +102,7 @@ def getID():
         process(**withInput()) # Voir **Kwarg python
     
 
+# Cette annotaion definit la fonction qui sera appeler
+#   si et seulement si le fichier est executé par python ( 'python monFichier' )
 if __name__ == '__main__':
     getID()
